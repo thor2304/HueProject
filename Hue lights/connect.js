@@ -2,14 +2,11 @@ const username = "5xw1qxEArnQZ5Xc3fiNQNjsudXhi7BiZaGGk-JzC";
 const bridgeIP = "192.168.0.102";
 let url = "";
 let resultDiv;
-let conBut;
-let hueBut;
-let briBut;
-let ctBut;
+let conBut, hueBut, briBut, ctBut;
+let hueSlider, briSlider, ctSlider;
 
-let hueSlider;
-let briSlider;
-let ctSlider;
+//Socket
+var socket;
 
 //Kvadranter
 let kvadrant1, kvadrant2, kvadrant3, kvadrant4;
@@ -17,7 +14,6 @@ let kvadrantPlads;
 
 //Mic
 let mic, volume;
-
 
 //Buffer
 let micBuf = [];
@@ -29,9 +25,15 @@ let bufferSize = (60 * 60 * bufferMinutes) / VolCounterLimit;
 
 const lightNumber = 24;
 
+let password = "hej";
+let admin = false;
+
+
 function setup(){
-    createCanvas(500, 500);
+    createCanvas(200, 200);
     createElement("h1", lightNumber);
+
+    socket = io.connect("http://10.138.66.109:3000");
 
 // ---------- Kvadranter ---------- //
     kvadrant1 = createButton("Kvadrant 1", 1).size(100, 100).position(0, 0).mousePressed(prom);
@@ -40,6 +42,8 @@ function setup(){
     kvadrant4 = createButton("Kvadrant 4", 4).size(100, 100).position(100, 100).mousePressed(prom);
 
 // ---------- Slut ---------- //
+
+    passwordChecker = createInput("", "password").position(400, 200).input(checkPassword).attribute('placeholder', 'Admin password');
 
 // ---------- Mic ---------- //
     mic = new p5.AudioIn();
@@ -81,6 +85,8 @@ function draw(){
     if(volume > highestVol){
         highestVol = volume;
         console.log("Højeste Volume: " + highestVol);
+                // Send socket besked
+                socket.emit("sound", highestVol);
     }
     if(VolCounter >= VolCounterLimit){
         // Laver en buffer på lydniveauet
@@ -95,12 +101,13 @@ function draw(){
         VolCounter = 0;
         highestVol = 0;
 
+        
+    }
+    //Check om admin
+    if(admin === true){
+        background(0);
     }
 
-
-
-    
-    
     /*
     if(mouseIsPressed && frameCount%90){
         setHue(hueSlider.value);
@@ -170,5 +177,11 @@ function prom(){
     if(confirm("Er det den rigtige kvadrant " + this.elt.value + " ?")){
         kvadrantPlads = this.elt.value;
         console.log(kvadrantPlads);
+    }
+}
+
+function checkPassword(){
+    if(this.value() == password){
+        admin = true;
     }
 }
