@@ -1,0 +1,24 @@
+{
+  "name": "hueproject",
+  "version": "1.0.0",
+  "description": "To control hue lamps",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thor2304/HueProject.git"
+  },
+  "author": "Thor Jørgin, Frederik Petersen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thor2304/HueProject/issues"
+  },
+  "homepage": "https://github.com/thor2304/HueProject#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "save": "^2.4.0",
+    "socket.io": "^2.3.0"
+  }
+}
