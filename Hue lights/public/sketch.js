@@ -100,7 +100,7 @@ function draw(){
         if(micBuf.length < bufferSize){
             micBuf.push(highestVol);
         }else{
-            micBuf.splice(1, 1);
+            micBuf.splice(1, 1); 
             micBuf.push(highestVol);
         }
         console.log("Buffer længde: " + micBuf.length)
@@ -113,7 +113,7 @@ function draw(){
     //Check om admin
     if(admin === true){
         //background(0);
-        fill(255);
+        fill(255,177, 110);
         stroke(0);
         ellipse(400, 100, 20, 20);
     }
