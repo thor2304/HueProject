@@ -5,7 +5,7 @@ let resultDiv;
 let conBut, hueBut, briBut, ctBut;
 let hueSlider, briSlider, ctSlider;
 
-const socketUrl = '10.138.68.161';
+const socketUrl = '10.138.66.109'; 
 const socketPort = '3000';
 
 //Socket
@@ -30,24 +30,25 @@ const lightNumber = 24;
 
 let password = "h";
 let admin = false;
+let ableToSend = true;
 
 
 function setup(){
     socket = io.connect("http://" + socketUrl + socketPort);
 
 // ---------- Kvadranter ---------- //
-    kvadrant1 = createButton("Kvadrant 1", 1).size(100, 100).position(0, 0).mousePressed(prom);
-    kvadrant2 = createButton("Kvadrant 2", 2).size(100, 100).position(100, 0).mousePressed(prom);
-    kvadrant3 = createButton("Kvadrant 3", 3).size(100, 100).position(0, 100).mousePressed(prom);
-    kvadrant4 = createButton("Kvadrant 4", 4).size(100, 100).position(100, 100).mousePressed(prom);
+    kvadrant1 = createButton("Kvadrant 1", 1).size(100, 100).position(0, 0).mousePressed(prom).id("kvad1");
+    kvadrant2 = createButton("Kvadrant 2", 2).size(100, 100).position(100, 0).mousePressed(prom).id("kvad2");
+    kvadrant3 = createButton("Kvadrant 3", 3).size(100, 100).position(0, 100).mousePressed(prom).id("kvad3");
+    kvadrant4 = createButton("Kvadrant 4", 4).size(100, 100).position(100, 100).mousePressed(prom).id("kvad4");
 
 // ---------- Slut ---------- //
 
     createCanvas(500, 500).position(0,200);
-    for(i=0; i<=9; i++){
+    for(i = 0; i <= 9; i++){
         createElement("br");
     }
-    
+
     createElement("h1", lightNumber);
 
     passwordChecker = createInput("", "password").position(400, 200).input(checkPassword).attribute('placeholder', 'Admin password');
@@ -68,18 +69,30 @@ function setup(){
 
     briBut = createButton("brightness").mousePressed(setBri);
     briSlider = createSlider(1, 254, 1, 1);
-    createDiv("brightness value: " +briSlider.value());
+    createDiv("brightness value: " + briSlider.value());
     createElement("br");
 
     ctBut = createButton("color temperature").mousePressed(setct);
     ctSlider = createSlider(153, 500, 300, 1);
-    createDiv("ct value: " +ctSlider.value());
+    createDiv("ct value: " + ctSlider.value());
     createElement("br");
 
     resultDiv = createDiv("result");
 
     url = "http://" + bridgeIP + '/api/' + username + '/lights/';
     httpDo(url + lightNumber, 'GET', dispRes);
+
+    // Sockets.on's
+    socket.on("kvadrantResponse", function(data){
+        if(data = kvadrantPlads){
+            console.log("reponse");
+            ableToSend == true;
+            document.getElementById("kvad" + string(data)).style.color = (68, 12, 220);
+        }else{
+            alert("Error, reload site");
+        }
+    })
+
 }
 
 function draw(){
@@ -95,16 +108,16 @@ function draw(){
                 // Send socket besked
                 socket.emit("sound", highestVol);
     }
+    // Tæller ned til at sende det højrste lyd niveau
     if(VolCounter >= VolCounterLimit){
-        // Laver en buffer på lydniveauet
-        if(micBuf.length < bufferSize){
-            micBuf.push(highestVol);
-        }else{
-            micBuf.splice(1, 1); 
-            micBuf.push(highestVol);
+        // Sender, hvis den har fået sat en plads
+        if(ableToSend){
+            socket.emit('control', {
+                kvadrant: kvadrantPlads,
+                lyd: highestVol,
+            });
         }
-        console.log("Buffer længde: " + micBuf.length)
-        console.log(micBuf);
+
         VolCounter = 0;
         highestVol = 0;
 
@@ -117,6 +130,7 @@ function draw(){
         stroke(0);
         ellipse(400, 100, 20, 20);
     }
+
 
     /*
     if(mouseIsPressed && frameCount%90){
