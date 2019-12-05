@@ -53,12 +53,6 @@ function nySocket(socket) {
     })
 
     socket.on('control', function(data){
-        if(firstConn){
-            arrayRead(); 
-            setInterval(arrayRead, 1000);
-            firstConn = false;
-        }
-
         kvadrant = data.kvadrant;
         lyd = data.lyd;
 
@@ -70,8 +64,19 @@ function nySocket(socket) {
             myMicArray.splice(1, 1); 
             myMicArray.push(lyd);
         }
+        //console.log("my mic array: "+ myMicArray);
+        console.log("myconnumber" + myConnNumber);
 
         globalMicArray[myConnNumber] = myMicArray;
+
+        //console.log("global array[0]: " + globalMicArray[0]);
+        console.log("length: " + globalMicArray.length);
+
+        if(firstConn){
+            arrayRead(); 
+            setInterval(arrayRead, 3000);
+            firstConn = false;
+        }
 
         //console.log("Buffer længde: " + micBuf.length)
         //console.log(micBuf1);        
@@ -84,7 +89,9 @@ function displayMsg(data){
 
 // SKal bare "gøre noget med arrayet"
 function arrayRead(){
-    for(i = 0; i < globalMicArray.length -1; i++){
+    console.log("arrayRead started");
+    for(i = 0; i < connNumber; i++){
+        console.log("i:" + i);
         let kvadrantN = globalMicArray[i][0];
         
         let tNoise = 0;
@@ -93,21 +100,26 @@ function arrayRead(){
         if(averageNoises[kvadrantN]){
             tNoise = averageNoises[kvadrantN].tnoise;
             nNoise = averageNoises[kvadrantN].nnoise;
+            console.log("averageNoises: ",  averageNoises);
         }    
 
         for(j=1; j< globalMicArray[i].length -1; j++){
             tNoise += globalMicArray[i][j];
             nNoise ++;
 
-            if(nNoise == globalMicArray[i].length- 1){
+            console.log("tnoise og nnoise: " + tNoise +" " + nNoise);
+            console.log(globalMicArray[i].length);
+
+            if(nNoise == globalMicArray[i].length- 1){ //virkede hlavt når det var - 2
                 averageNoises[kvadrantN] = {
                     tnoise: tNoise,
                     nnoise: nNoise,
-                };
+                }
+
 
                 console.log("averageNoise nnoise for " + kvadrantN + " er " + averageNoises[kvadrantN].nnoise +" og tnoise "+ averageNoises[kvadrantN].tnoise );
  
-                if(i==globalMicArray.length){
+                if(i==connNumber){
                     for(k=1; k<averageNoises.length; k++){
                         averageNoises[k] = averageNoises[k].tnoise / averageNoises[k].nnoise;
                         console.log("det endelige gennesnit blev i kvadrant " + k + ": " + averageNoises[k]);
@@ -115,9 +127,11 @@ function arrayRead(){
                 }
             }
         }
-
         
+        console.log(tNoise, nNoise);
     }
+    
+    console.log("averagenoises: ",  averageNoises);
 
     //setlights
 

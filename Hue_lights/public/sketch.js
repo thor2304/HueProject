@@ -17,12 +17,12 @@ let mic, volume;
 let miMicArray = [];
 let highestVol = 0;
 let VolCounter = 0;
-const VolCounterLimit = 60 * 30;
+const VolCounterLimit = 60 * 3;
 
 const password = "h";
 let admin = false;
 let ableToSend = false;
-//let toAudio
+let toAudio
 
 function setup(){
 
@@ -69,27 +69,28 @@ function setup(){
     socket.on("kvadrantResponse", function(data){
         if(data = kvadrantPlads){
             console.log("reponse");
-            ableToSend == true;
+            ableToSend = true;
             document.getElementById("kvad" + String(data)).style.backgroundColor = "red";
-            /*
-            mic = new p5.AudioIn();
-            mic.start();*/
+            
+            //mic = new p5.AudioIn();
+            //mic.start();
         }else{
             alert("Error, reload site");
         }
     })
 
-    
+    /*
     document.querySelector('button').addEventListener('click', function() {
 
-        //context = new AudioContext();
+        toAudio = new AudioContext();
       
-      });
-    
+      });*/
+      
 
 }
 
 function draw(){
+    
     
     // Sæt lydniveau
     if(ableToSend){
@@ -150,11 +151,16 @@ to create a new div for the UI elements
 */
 
 function prom(){
+    if (getAudioContext().state !== 'running') {
+        getAudioContext().resume();
+      }
+
     if(confirm("Er det den rigtige kvadrant " + this.elt.value + " ?")){
         kvadrantPlads = this.elt.value;
         socket.emit("kvadrant", kvadrantPlads);
         console.log(kvadrantPlads);
     }
+
 }
 
 function checkPassword(){
