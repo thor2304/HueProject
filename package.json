@@ -1,28 +1,19 @@
 {
-  "name": "hueproject",
+  "name": "ras_test",
   "version": "1.0.0",
-  "description": "To control hue lamps",
-  "main": "server.js",
+  "description": "Raspberry hue project",
+  "main": "ras.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/thor2304/HueProject.git"
-  },
-  "author": "Thor Jørgin, Frederik Petersen",
+  "author": "Thor & Greve",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/thor2304/HueProject/issues"
-  },
-  "homepage": "https://github.com/thor2304/HueProject#readme",
   "dependencies": {
-    "express": "^4.17.1",
     "fs": "0.0.1-security",
+    "lodash": "^4.17.15",
     "mic": "^2.1.2",
-    "request": "^2.81.0",
-    "save": "^2.4.0",
-    "socket.io": "^2.3.0",
+    "request": "^2.88.0",
+    "underscore": "^1.9.1",
     "wav-decoder": "^1.3.0",
     "waveheader": "0.0.2"
   }
