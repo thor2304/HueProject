@@ -6,10 +6,10 @@ var fs = require('fs');
 const WavDecoder = require("wav-decoder");
 var header = require("waveheader");
 var _ = require('lodash');
-
+let overallBri = 120;
 
 // Setting up hue //
-const username = "4PpVIdltqS91AG5YnyjWBu7E8Cp27ltZAVaI5Kj"; //Andet: 5xw1qxEArnQZ5Xc3fiNQNjsudXhi7BiZaGGk-JzC 
+const username = "re-EALRTkvHkNYTtpbYTGufY8yXhDAWZGaYwrthr"; 
 const bridgeIP = "192.168.0.102";
 const whichLight = 24;
 const urlLights = "http://" + bridgeIP + '/api/' + username + '/lights/';
@@ -30,7 +30,7 @@ function setLight(data){
       if(error){
         console.log("error", error);
       }
-      console.log("response, ", response);
+      //console.log("response, ", response);
       console.log('Uploaded, body:', body);
     });
     //httpDo(path, 'PUT', content, 'text', dispRes);  // Lav til request
@@ -78,11 +78,13 @@ const config = {
 
 // variables used by the clap detection
 const minTime = 500; // ms
-const threshold = 0.5;
+const threshold = 0.3;
 let time = null;
 let buffers = [];
 const micInstance =  mic(config);
 const stream = micInstance.getAudioStream();
+
+setBri(overallBri, true);
 
 stream.on('data', buffer => {
     
@@ -101,13 +103,15 @@ stream.on('data', buffer => {
            console.log('-----> clap'); // -> this is the place where we put our own larger buffer
 
             if(flip){
-                setBri(150, true);
+                setBri(overallBri, true);
                 console.log("on");
                 flip = !flip;
+                overallBri++;
             }else{
-                setBri(150, false);
+                setBri(overallBri, false);
                 console.log("off");
                 flip = !flip;
+                overallBri--;
 
             }
 
