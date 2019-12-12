@@ -9,7 +9,7 @@ var _ = require('lodash');
 
 
 // Setting up hue //
-const username = "5xw1qxEArnQZ5Xc3fiNQNjsudXhi7BiZaGGk-JzC"; //gustavs nye til os er: 4PpVIdltqS91AG5YnyjWBu7E8Cp27ltZAVaI5Kj
+const username = "4PpVIdltqS91AG5YnyjWBu7E8Cp27ltZAVaI5Kj"; //Andet: 5xw1qxEArnQZ5Xc3fiNQNjsudXhi7BiZaGGk-JzC 
 const bridgeIP = "192.168.0.102";
 const whichLight = 24;
 const urlLights = "http://" + bridgeIP + '/api/' + username + '/lights/';
@@ -19,15 +19,22 @@ const urlLights = "http://" + bridgeIP + '/api/' + username + '/lights/';
 
 function setLight(data){
     let path = urlLights + whichLight + "/state/";
+    console.log("set path");
 
     //const content = JSON.stringify(data);
     request({
         method: "PUT",
         uri: path,
         json: data,
-    }, console.log("requestSucces"));
+    }, function (error, response, body){
+      if(error){
+        console.log("error", error);
+      }
+      console.log("response, ", response);
+      console.log('Uploaded, body:', body);
+    });
     //httpDo(path, 'PUT', content, 'text', dispRes);  // Lav til request
-
+    console.log("make request");
 }
 
 function setBri(value, on){
@@ -96,9 +103,12 @@ stream.on('data', buffer => {
             if(flip){
                 setBri(150, true);
                 console.log("on");
+                flip = !flip;
             }else{
                 setBri(150, false);
                 console.log("off");
+                flip = !flip;
+
             }
 
           }
