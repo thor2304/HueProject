@@ -77,7 +77,7 @@ const config = {
 
 
 // variables used by the clap detection
-const minTime = 1000 * 30; // ms
+const minTime = 1000 * 3; // ms
 const threshold = 0.6;
 let time = null;
 let buffers = [];
@@ -114,19 +114,14 @@ stream.on('data', buffer => {
             globalAverage = globalSum / globalMicArray.length;
             console.log(globalAverage);
 
-            switch(globalAverage){
-              case globalAverage <= threshold:
+            if(globalAverage <= threshold){
+              console.log("average er under threshold");
 
-                console.log("average er under threshold");
-                break;
+            }else if(lobalAverage > threshold){
+              console.log("average er over threshold");
 
-              case globalAverage > threshold:
-                console.log("average er over threshold");
-                break;
-
-              default:
-                console.log("default case");
-
+            }else{
+              console.log("Ingen virkede");
             }
             
           
