@@ -77,12 +77,15 @@ const config = {
 
 
 // variables used by the clap detection
-const minTime = 500; // ms
-const threshold = 0.3;
+const minTime = 1000 * 30; // ms
+const threshold = 0.6;
 let time = null;
 let buffers = [];
 const micInstance =  mic(config);
 const stream = micInstance.getAudioStream();
+
+let globalSum;
+let globalAverage;
 
 setBri(overallBri, true);
 
@@ -99,23 +102,35 @@ stream.on('data', buffer => {
         .then(audioData => {
           const wave = audioData.channelData[0];
           const maxAmplitude = _.max(wave);
-          if (maxAmplitude > threshold) {
-           console.log('-----> clap'); // -> this is the place where we put our own larger buffer
+          
+          //this is where we make the buffer array
+          globalMicArray.push(maxAmplitude);
 
-            if(flip){
-                setBri(overallBri, true);
-                console.log("on");
-                flip = !flip;
-                overallBri++;
-            }else{
-                setBri(overallBri, false);
-                console.log("off");
-                flip = !flip;
-                overallBri--;
-
+           if(globalMicArray.length >= bufferSize){
+            globalMicArray.splice(0, 1);
             }
 
-          }
+            globalSum = _.sum(globalMicArray);
+            globalAverage = globalSum / globalMicArray.length;
+            console.log(globalAverage);
+
+            switch(globalAverage){
+              case globalAverage <= threshold:
+
+                console.log("average er under threshold");
+                break;
+
+              case globalAverage > threshold:
+                console.log("average er over threshold");
+                break;
+
+              default:
+                console.log("default case");
+
+            }
+            
+          
+
         })
         .catch(console.log);
       time = newTime; // -> reset the timer
