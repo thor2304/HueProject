@@ -149,7 +149,8 @@ stream.on('data', buffer => {
           }else if(globalAverage > lowThreshold && globalAverage <= highThreshold){
             console.log("average er over nedre threshold, og under øvre");
 
-            let calculatedBrightness = map(calculatedNoise, 0, 10, 255, 10);
+            let calculatedBrightness = map(calculatedNoise, 0, 1000, 255, 10);
+            
             //setBri(calculatedBrightness , 4);
             console.log("calculated Noise: " + calculatedNoise);  
             console.log("calculatedBrightness: " + calculatedBrightness);           
@@ -178,6 +179,15 @@ stream.on('data', buffer => {
 stream.on('error', function(err) {
     cosole.log("Error in Input Stream: " + err);
 });
+
+
+function map(inp, a,b, c,d){
+    output = c- ( (inp - a) / (b-a) ) * (c-d);
+
+    return output;
+}
+
+
 
 
 time = new Date().getTime();
