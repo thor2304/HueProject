@@ -49,11 +49,6 @@ function setBri(value, on){
 }
  
 
-// Variables for our buffering of noise
-const VolCounterLimit = 30; //seconds of audio
-const bufferMinutes = 5;
-const bufferSize = (60 * 60 * bufferMinutes) / (60 * VolCounterLimit);
-
 let flip = false;
 
 let connNumber = 0;
@@ -76,9 +71,13 @@ const config = {
 
 
 
-// variables used by the clap detection
+// Variables for our buffering of noise
 const minTime = 1000 * 3; // ms
-const threshold = 0.6;
+const threshold = 0.3;
+
+const bufferMinutes = 5;
+const bufferSize = (60 * bufferMinutes) / (minTime / 1000);
+
 let time = null;
 let buffers = [];
 const micInstance =  mic(config);
@@ -86,6 +85,8 @@ const stream = micInstance.getAudioStream();
 
 let globalSum;
 let globalAverage;
+let globalMedian;
+let globalMedianArray;
 
 setBri(overallBri, true);
 
@@ -112,12 +113,20 @@ stream.on('data', buffer => {
 
             globalSum = _.sum(globalMicArray);
             globalAverage = globalSum / globalMicArray.length;
-            console.log(globalAverage);
+            globalMedianArray = globalMicArray;
+            globalMedianArray.sort();
+            globalMedian = globalMedianArray[Math.round(globalMedianArray.length / 2)];
 
+            
+            console.log(globalAverage);
+            console.log("globalMicArray length: " + globalMicArray.length);
+            console.log("maxAmplitude: " + maxAmplitude);
+            console.log("Global median: " + globalMedian);
+            
             if(globalAverage <= threshold){
               console.log("average er under threshold");
 
-            }else if(lobalAverage > threshold){
+            }else if(globalAverage > threshold){
               console.log("average er over threshold");
 
             }else{
