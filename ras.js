@@ -6,7 +6,7 @@ var fs = require('fs');
 const WavDecoder = require("wav-decoder");
 var header = require("waveheader");
 var _ = require('lodash');
-let overallBri = 120;
+let overallBri = 100;
 
 // Setting up hue //
 const username = "re-EALRTkvHkNYTtpbYTGufY8yXhDAWZGaYwrthr"; 
@@ -37,19 +37,29 @@ function setLight(data){
     console.log("make request");
 }
 
-function setBri(value, on){
+function setBri(value, tTime){
     
     const bri = {
         bri: value, 
-        on: on,
-        transitiontime: 0,
+        on: true,
+        transitiontime: tTime,
     }
 
     setLight(bri);
 }
+
+function lampOff(){
+    
+  const bri = { 
+      on: false,
+      transitiontime: 0,
+  }
+
+  setLight(bri);
+}
  
 
-let flip = false;
+let fullOn = false;
 
 let connNumber = 0;
 let globalMicArray = [];
@@ -73,7 +83,8 @@ const config = {
 
 // Variables for our buffering of noise
 const minTime = 1000 * 3; // ms
-const threshold = 0.3;
+const lowThreshold = 0.3;
+const highThreshold = 0.65;
 
 const bufferMinutes = 5;
 const bufferSize = (60 * bufferMinutes) / (minTime / 1000);
@@ -87,8 +98,9 @@ let globalSum;
 let globalAverage;
 let globalMedian;
 let globalMedianArray;
+let calculatedNoise;
 
-setBri(overallBri, true);
+setBri(overallBri, true, 0);
 
 stream.on('data', buffer => {
     
@@ -107,31 +119,48 @@ stream.on('data', buffer => {
           //this is where we make the buffer array
           globalMicArray.push(maxAmplitude);
 
-           if(globalMicArray.length >= bufferSize){
+          if(globalMicArray.length >= bufferSize){
             globalMicArray.splice(0, 1);
+          }
+
+          globalSum = _.sum(globalMicArray);
+          globalAverage = globalSum / globalMicArray.length;
+          globalMedianArray = globalMicArray;
+          globalMedianArray.sort();
+          globalMedian = globalMedianArray[Math.round(globalMedianArray.length / 2)];
+
+          calculatedNoise =  globalAverage / Math.abs(globalAverage - globalMedian) ;
+
+          
+          console.log(globalAverage);
+          console.log("globalMicArray length: " + globalMicArray.length);
+          console.log("maxAmplitude: " + maxAmplitude);
+          console.log("Global median: " + globalMedian);
+          
+
+          if(globalAverage <= lowThreshold){
+            console.log("average er under threshold");
+
+            if(!fullOn){
+              setBri(255, 4);
+              fullOn = true;
             }
 
-            globalSum = _.sum(globalMicArray);
-            globalAverage = globalSum / globalMicArray.length;
-            globalMedianArray = globalMicArray;
-            globalMedianArray.sort();
-            globalMedian = globalMedianArray[Math.round(globalMedianArray.length / 2)];
+          }else if(globalAverage > lowThreshold && globalAverage <= highThreshold){
+            console.log("average er over nedre threshold, og under øvre");
 
-            
-            console.log(globalAverage);
-            console.log("globalMicArray length: " + globalMicArray.length);
-            console.log("maxAmplitude: " + maxAmplitude);
-            console.log("Global median: " + globalMedian);
-            
-            if(globalAverage <= threshold){
-              console.log("average er under threshold");
+            let calculatedBrightness = map(calculatedNoise, 0, 10, 255, 10);
+            //setBri(calculatedBrightness , 4);
+            console.log("calculated Noise: " + calculatedNoise);  
+            console.log("calculatedBrightness: " + calculatedBrightness);           
 
-            }else if(globalAverage > threshold){
-              console.log("average er over threshold");
+          }else if(globalAverage > highThreshold){
+            console.log("average er over øvre threshold");
+            lampOff();
 
-            }else{
-              console.log("Ingen virkede");
-            }
+          }else{
+            console.log("Ingen virkede");
+          }
             
           
 
