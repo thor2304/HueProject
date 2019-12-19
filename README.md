@@ -7,8 +7,6 @@ The final project runs on a Raspberry Pi in Node.js. The microphone is connected
 ## Libraries/dependencies
 Vi har anvendt nogle forskellige libraries for at få projektet til at virke. Her følger en liste over disse og en kort beskrivelse af hvad de bruges til:
 
-
-
 - mic
   - _mic_ bruges til at optage lyden fra mikrofonen. Denne pakker laver en midlertidig fil på Pi'en. Filen har formatet raw og er derfor de rå input værdier fra mikrofonen uden noget formatering. 
 - wav-decoder
@@ -16,10 +14,9 @@ Vi har anvendt nogle forskellige libraries for at få projektet til at virke. He
 - waveheader
   - _waveheader_ bruges til at indsætte en header i raw filen, som gør den til en .wav fil. Dette gør at vi nu kan aflæse den midlertidige fil fra mikrofonen.
 - lodash
-  - _lodash_ er et utility library, som har nogle smarte funktioner og værktøjer. I dette projekt anvendes dog kun `_.sum()` funktionen og `_.max()` funktionen. 
-
+ _lodash_ er et utility library, som har nogle smarte funktioner og værktøjer. I dette projekt anvendes dog kun `_.sum()` funktionen og `_.max()` funktionen. 
 - request
-  - 
+  _request_ bruges til at sende HTTP requests til Hue Bridgen
 
 
 
