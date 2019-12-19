@@ -152,8 +152,9 @@ Vi tackler punkterne hver for sig og argumenterer for hvorfor vores projekt leve
   - Oprette et netværk af mikrofoner. Vi kunne godt tænke os at det var muligt at vi knyttede flere mikrofoner til en Raspberry Pi. Hvis det ikke er muligt med flere mikrofoner, havde vi tænkt at man kunne installere flere Pi's med én mikrofon hver. Disse Pi's skulle så kommunikere til en central Pi, eller anden server som skulle håndtere hver Pi og dets inputs og derefter stå for at styre Hue-lamperne. Hver lampe kunne så svare til en mikrofon. 
 
 
-  ## Thanks for holding out and reading it all #:shipit:
+  ## Thanks for holding out and reading it all :shipit:
   #### *Simon gav os lov til at skrive mere end 2 sider* :stuck_out_tongue_winking_eye:
   Han vidste nok ikke helt hvad han sagde ja til.
+  _(hvis i er nysgerrige, så er der 15,300 tegn inklusive mellemrum i filen)_
 
   # Project created by Frederik Greve Petersen and Thor Malmby Jørgin
