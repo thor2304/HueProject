@@ -82,11 +82,11 @@ const config = {
 
 
 // Variables for our buffering of noise
-const minTime = 1000 * 3; // ms
-const lowThreshold = 0.3;
-const highThreshold = 0.65;
+const minTime = 1000 * 10; // ms
+const lowThreshold = 0.1;
+const highThreshold = 0.4;
 
-const bufferMinutes = 5;
+const bufferMinutes = 2;
 const bufferSize = (60 * bufferMinutes) / (minTime / 1000);
 
 let time = null;
@@ -96,11 +96,9 @@ const stream = micInstance.getAudioStream();
 
 let globalSum;
 let globalAverage;
-let globalMedian;
-let globalMedianArray;
 let calculatedNoise;
 
-setBri(overallBri, true, 0);
+setBri(overallBri, 0);
 
 stream.on('data', buffer => {
     
@@ -125,17 +123,19 @@ stream.on('data', buffer => {
 
           globalSum = _.sum(globalMicArray);
           globalAverage = globalSum / globalMicArray.length;
+
+         /*  //Dette blev brugt til at udregne støjen, men er meget ufordusigeligt. Særligt når arrayet er meget småt
           globalMedianArray = globalMicArray;
           globalMedianArray.sort();
           globalMedian = globalMedianArray[Math.round(globalMedianArray.length / 2)];
 
-          calculatedNoise =  globalAverage / Math.abs(globalAverage - globalMedian) ;
+          calculatedNoise =  globalAverage / Math.abs(globalAverage - globalMedian) ; */
 
           
           console.log(globalAverage);
           console.log("globalMicArray length: " + globalMicArray.length);
           console.log("maxAmplitude: " + maxAmplitude);
-          console.log("Global median: " + globalMedian);
+          //console.log("Global median: " + globalMedian);
           
 
           if(globalAverage <= lowThreshold){
@@ -149,15 +149,21 @@ stream.on('data', buffer => {
           }else if(globalAverage > lowThreshold && globalAverage <= highThreshold){
             console.log("average er over nedre threshold, og under øvre");
 
-            let calculatedBrightness = map(calculatedNoise, 0, 1000, 255, 10);
+            let calculatedBrightness = Math.round(map(globalAverage, lowThreshold, highThreshold, 255, 10));
+
+            if(calculatedBrightness < 10){
+              calculatedBrightness = 10;
+            }
             
-            //setBri(calculatedBrightness , 4);
+            setBri(calculatedBrightness , 2);
             console.log("calculated Noise: " + calculatedNoise);  
-            console.log("calculatedBrightness: " + calculatedBrightness);           
+            console.log("calculatedBrightness: " + calculatedBrightness); 
+            fullOn = false;          
 
           }else if(globalAverage > highThreshold){
             console.log("average er over øvre threshold");
             lampOff();
+            fullOn = false;
 
           }else{
             console.log("Ingen virkede");
