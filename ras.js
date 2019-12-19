@@ -1,6 +1,6 @@
 // Lavet af: Thor Malmby Jørgin og Frederik Greve Petersen, fra Digital Teknik, teknikfag.
 
-// Justerbare variabler
+// Justerbare variabler.
   const initialBri = 100; // Angives med en værdi mellem 0 og 254;
 
   // Variable for vores buffer, der håndtere lyd.
