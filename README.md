@@ -21,13 +21,13 @@ Projektet kører i Node.js og derfor har vi anvendt nogle forskellige NPM pakker
 Derudover er vi afhængige af et program/utility, der hedder **SoX**. SoX er det, som muliggør at vores program kan kommunikere med mikrofonen. SoX er ikke en NPM pakke, men derimod et program, som skal installeres på Pi'en, i stil med Node. Mere om det kan findes under afsnittet om _Setup og NPM install_. 
 
 ## Hvad kan det, hvad kan det ikke?
-Denne installation, kan opfange mikrofon lyd og afgøre, hvornår gennemsnittet af de højeste lyde, inden for _x_ antal sekunder, i lokalet er for høje. Udfra støj niveauet, dæmper Phillips Hue lampen sig, og ved alt for meget støj slukkes den. Når der ikke er noget støj, er lampen tændt med den højeste lys styrke.
+Denne installation, opfanger mikrofonlyd og noterer det højeste lydniveau, inden for _x1_ antal sekunder. Dette lydniveau gemmes sammen med de lydniveauer den har observeret indenfor de sidste _x2_ minutter. Hvis støjniveauet er for højt, bliver Philips Hue lampen dæmpet, og hvis støjniveauet er alt for højt slukkes den helt. Når støjniveauet er lavt nok, bliver lampen tændt med den højeste lysstyrke.
 
-Pointen med installationen er at man skal kunne gå ind i et lokale, og få sig et hurtigt overblik over hvor der ikke er larm, så man kan sætte sig et sted hvor der er ro. Dette kræver dog et netværk af Raspberry Pi's der kommunikere sammen. Det har vi ikke haft adgang til i det forløbet, projektet blev lavet i. **Så PT kan en Pi kun lytte til mikrofonen tilknyttet sig selv.**
+Pointen med installationen er at man skal kunne gå ind i et lokale, og få sig et hurtigt overblik over hvor der er larm og hvor der ikke er, så man kan sætte sig et sted hvor der er ro. Dette kræver dog et netværk af Raspberry Pi's der kommunikerer sammen. Det har vi ikke haft adgang til, i første omgang. Så **PT kan en Pi kun lytte til én mikrofon tilknyttet sig selv.**
 
-Systemet kan ikke afgøre hvad der klassificeres som støj. **Systemet er ikke selv-tænkende**. Det er bruger afgjort hvad der er støj. I denne opgave har vi tolket støj som at det er mange høje lyde, over en længere periode, og generelt bare et højt lyd niveau. Systemet beregner gennemsnittet af de højeste lyde inden for et interval af 10 sekunder. Hvis gennemsnittet af de højeste lyde overskrider støjgrænsen, sat af brugeren, tolkes det som støj og systemet reagere tilsvarende.
+Systemet kan ikke afgøre hvad der klassificeres som støj. **Systemet er ikke selv-tænkende**. Det afgøres af brugeren hvad der er støj og hvad der ikke er. Mere præcist sagt er der hardcoded en grænse, som afgør hvad der er støj. I denne opgave har vi tolket støj, som at der er mange høje lyde, over en længere periode, og derfor generelt bare et højt lyd niveau. Systemet lytter i 10 sekunder og noterer den højeste lyd den har hørt. Dette lydniveau bliver lagt i et array, og denne process gentages. På baggrund af dette array beregnes gennemsnittet af de højeste lyde indenfor de sidste 2 minutter. Hvis gennemsnittet af de højeste lyde overskrider støjgrænsen, sat af brugeren, tolkes det som støj og systemet reagerer tilsvarende.
 
-Man kan ikke ændre hvilken lampe der skal snakkes med gennem API'en, ligesom man kan ikke ændre hvilken Bridge man forbinder til, **hvis man ikke har adgang til kildekoden**. Der er ikke en interface, der kan bruges til ændring af oplysninger nødvendige for et lettere overblik fra brugerens synspunkt. *Dette kunne være en ting, man kunne videreudvikle.*
+Man kan kun ændre hvilken lampe der skal snakkes med, og hvilken Bridge man forbinder til, hvis man har adgang til kildekoden. __Der er ikke et interface__, der kan bruges til nem opsætning af systemet for en ny bruger. *Dette kunne være en ting, man kunne videreudvikle.*
 
 
 ## API'er i projektet
@@ -50,12 +50,10 @@ Vores teori er altså at der er forskellige kategorier af enheder på Bridgen og
 - Et username genereret på en Raspberry Pi kan __ikke__ anvendes på en esp8266
 
 
-## Brugen af produktet / anvendelsen
-
-
-
 ## Setup, inklusive NPM install
-Inden projektet kan komme til at køre på en frisk Raspberry Pi er der lige nogle ting man skal installere først. I det følgende forudsætter vi at man har en helt frisk installation af styresystemet _(vores Pi kører på Raspbian)_. 
+Inden projektet kan komme til at køre på en frisk Raspberry Pi er der lige nogle ting man skal installere først. I det følgende forudsætter vi at man har en helt frisk installation af styresystemet _(vores Pi kører på Raspbian)_.
+
+__*Følgende foregår på Raspberry Pi'en.*__ Intet foregår på en computer.
 
 1. Hardware
     Det første vi skal have styr på er at alt er koblet til ens Raspberry Pi, vores erfaring er at det bedste er at have alt forbundet til ens Pi inden den tændes. Det vil sige, forbind en skærm, tastatur, mus og vigtigst: mikrofonen. 
@@ -91,16 +89,46 @@ Inden projektet kan komme til at køre på en frisk Raspberry Pi er der lige nog
     npm install
     ```
     Dette vil installere de npm pakker, som vi har bedt om i package filen. Nu er vi klar til at starte projektet som det sidste trin.
- 
-6. Kør filen
+
+6. Forbind til Hue
+    For at oprette forbindelse til din egen Hue-bridge skal du finde brigdens IP-adresse og få din egen access-key. Dette kan gøres ved at følge [denne guide](https://developers.meethue.com/develop/get-started-2/ "Philips API dokumentation").
+    Når du er blevet givet en access-key, skal du åbne `ras.js` og ændre variablen `username` til dit egen access-key. Du skal også ændre variablen `bridgeIP` til din egens bridges IP.
+    Du skal desuden nu finde nummeret til den lampe du gerne ville styre. Dette gøres igen på `https://<bridge ip address>/debug/clip.html`, her skal du lave en command `https://<bridge ip address>/api/<username>/lights`, med `GET` metoden. Så vil du få et respone med alle de numre der er tilknyttet din brigde.
+    Vælg den lampe du vil bruge systemet til at ændre, og indtast det nummer i variablen: `whichLight` i filen `ras.js`.
+    __*Husk at gemme filen!*__
+
+7. Kør filen
     For at køre filen bruger vi kommandoen `node <filnavn>` på filen `ras.js`:
    ```s
     node ras.js
     ```
     For at afslutte node skal man trykke ctrl+c, det er meget vigtigt at man ikke trykker på andre taster mens `ras.js` kører da det får mikrofonen til at gå i kage. Hvis man gør dette har vi haft størst succes ved at genstarte vores Raspberry Pi med det samme. 
 
-## Derfor har dette projekt opfyldt kravene
+## Brugen af produktet / anvendelsen
+Tomt afsnit
 
+
+## Derfor har dette projekt opfyldt kravene
+I dette projekt skulle vi lave et intelligent system, som både anvender API'er og inteeragerer med den fysiske verden. Pointen var altså at vi skulle have vores kode til at gøre noget udenfor bare vores egen computer. 
+
+Vi tackler punkterne hver for sig og argumenterer for hvorfor vores projekt lever op til de enkelte krav
+1. Anvendelse af API
+   - Vi kommunikerer til lamperne gennem det API, som Philips har stillet til rådighed på deres Hue Bridge. Det vil sige at for at vi overhovedet kan styre lamperne har vi kommunikation med et API. Vi mener derfor at vi har opfyldt dette krav ved at kommunikere med Philips Hue gennem deres API. 
+
+2. Interaktion med den fysiske verden
+   - Dette punkt knytter sig også til Philips Hue. Vi kan påvirke den fysiske verden gennem lamperne. Ved at få lamperne til at tænde og slukke, påvirker vi den fysiske verden. Således opfylder vi altså kravet ved at vi manipulerer med lamper i den fysiske verden.
+
+3. Intelligent system
+   - Vores argument for at systemet er intelligent er at det opfører sig forskelligt alt efter hvad lydniveauet er. Når lydniveauet er under en bestemt grænse er systemet ligeglad med hvad det helt præcist er, lampen er bare helt tændt. Når lydniveauet så når op i midter-regionen er det meget afhængigt af præcis hvad gennemsnittet er. Når lydniveauet så er over en øvre grænse vil systemet igen være ligeglad med hvad gennemsnittet er helt præcist, og lampen vil bare være helt slukket. 
 
 
 ## Næste skridt
+- Hvad ville vi lave hvis vi havde en uge mere?
+  - Vi ville lave en setup-del, som automatisk  
+  - gøre det let for brugeren at opsætte og ændre Hue-forbindelserne.
+  - Vi ville gerne have haft mere tid til at lege med tresholds'ne for hvad vi indikere som støj. *Det har været ret svært for os at finde ud af, hvad vi mener er støj. Det virker som om at mikrofonen opfanger forskellige toner forskelligt. Det har gjort at vi har haft lidt svært ved at finde ud af hvad der laver, det vi tolker som støj.*
+  
+
+- Hvordan kan man tage projektet til en ny højde?
+  - Som nævnt i overstående afsnit, er støjen defineret udfra nogle brugerdefineret værdier. Det kunne være smart at få integreret machine-learning, så man kan træne en maskine til at tolke hvad støj er, så det ikke bare er enkelte høje lyde eller konstant lydtryk der *hard-codes*. 
+  - Oprette et netværk af mikrofoner. Vi kunne godt tænke os at det var muligt at vi knyttede flere mikrofoner til en Raspberry Pi. Hvis det ikke er muligt med flere mikrofoner, havde vi tænkt at man kunne installere flere Pi's med én mikrofon. Disse Pi's skulle så kommunikere til en central Pi, eller anden server som skulle håndtere hver Pi og dets inputs.
