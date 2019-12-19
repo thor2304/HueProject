@@ -18,7 +18,7 @@ Projektet kører i Node.js og derfor har vi anvendt nogle forskellige NPM pakker
 - **request**
   - _request_ bruges til at sende HTTP requests til Hue Bridgen
 
-Derudover er vi afhængige af et program/utility, der hedder **SoX**. SoX er det, som muliggør at vores program kan kommunikere med mikrofonen. SoX er ikke en NPM pakke, men derimod et program, som skal installeres på Pi'en, i stil med Node. Mere om det kan findes under afsnittet om _Setup og NPM install_. 
+Derudover er vi afhængige af et program/utility, der hedder **SoX**. SoX er det, som muliggør at vores program kan kommunikere med mikrofonen. SoX er ikke en NPM pakke, men derimod et program, som skal installeres på Pi'en, i stil med Node. Mere om det kan findes under afsnittet om _Setup og NPM install_ [Setup og NPM install med #](#setup-inklusive-npm-install "link til afsnit") [Setup og NPM install med /HueProject#](/HueProject#setup-inklusive-npm-install "link til afsnit"). SoX, kalder sig selv for _"the swiss army knife of sound"_ og denne bruges af pakken mic til at optage lyd. 
 
 ## Hvad kan det, hvad kan det ikke?
 Denne installation, opfanger mikrofonlyd og noterer det højeste lydniveau, inden for _x1_ antal sekunder. Dette lydniveau gemmes sammen med de lydniveauer den har observeret indenfor de sidste _x2_ minutter. Hvis støjniveauet er for højt, bliver Philips Hue lampen dæmpet, og hvis støjniveauet er alt for højt slukkes den helt. Når støjniveauet er lavt nok, bliver lampen tændt med den højeste lysstyrke.
@@ -105,7 +105,14 @@ __*Følgende foregår på Raspberry Pi'en.*__ Intet foregår på en computer.
     For at afslutte node skal man trykke ctrl+c, det er meget vigtigt at man ikke trykker på andre taster mens `ras.js` kører da det får mikrofonen til at gå i kage. Hvis man gør dette har vi haft størst succes ved at genstarte vores Raspberry Pi med det samme. 
 
 ## Brugen af produktet / anvendelsen
-Tomt afsnit
+Når du endelig har fået systmet oppe at køre, kan du se forskellige console logs:
+- Længden af arrayet for det højeste lydniveauer.
+- Det højeste lydniveau inden for tidsintervallet.
+- Gennemsnittet af de højeste lydniveauer.
+- Om gennemsnittet er under, mellem eller over tresholds'ne.
+- `calculatedBrightness` som er en værdi, der beregnes til at styre hvor meget lyset skal dæmpes ved støj.
+
+*Ved små ændringer i kildekoden, kan flere console logs blive givet. Udkommentationerne (`//`) skal bare fjernes ved `// console.log(...)`*.
 
 
 ## Derfor har dette projekt opfyldt kravene
@@ -124,11 +131,11 @@ Vi tackler punkterne hver for sig og argumenterer for hvorfor vores projekt leve
 
 ## Næste skridt
 - Hvad ville vi lave hvis vi havde en uge mere?
-  - Vi ville lave en setup-del, som automatisk  
-  - gøre det let for brugeren at opsætte og ændre Hue-forbindelserne.
-  - Vi ville gerne have haft mere tid til at lege med tresholds'ne for hvad vi indikere som støj. *Det har været ret svært for os at finde ud af, hvad vi mener er støj. Det virker som om at mikrofonen opfanger forskellige toner forskelligt. Det har gjort at vi har haft lidt svært ved at finde ud af hvad der laver, det vi tolker som støj.*
+  - Vi ville lave en setup-del, som automatisk kan hjælpe brugeren med at skaffe et username, da det er en besværlig del af at implementere systemet med en ny bridge. Hvis muligt, ikke bare skaffe, men også ændre det, så man ikke behøver at gå til kildekoden.
+  - Vi vil lave et interface, som gør det let for brugeren at opsætte forbindelserne til Hue-lamperne og Bridgen. Vi vil gerne gøre så brugeren kan se, hvilke lamper der er forbundet og vælge udfra en liste. Brugeren skal kunne indtaste brigdens IP-addresse i et felt, evt på en webside kørt at Pi'en.
+  - Vi ville gerne tilpasse vores tresholds for hvad der er støj. *Det har været ret svært for os at finde ud af, hvad vi mener er støj. Det virker som om at mikrofonen opfanger forskellige toner forskelligt. Det har gjort at vi har haft lidt svært ved at finde ud af hvad der laver, det vi tolker som støj.*
   
 
 - Hvordan kan man tage projektet til en ny højde?
-  - Som nævnt i overstående afsnit, er støjen defineret udfra nogle brugerdefineret værdier. Det kunne være smart at få integreret machine-learning, så man kan træne en maskine til at tolke hvad støj er, så det ikke bare er enkelte høje lyde eller konstant lydtryk der *hard-codes*. 
-  - Oprette et netværk af mikrofoner. Vi kunne godt tænke os at det var muligt at vi knyttede flere mikrofoner til en Raspberry Pi. Hvis det ikke er muligt med flere mikrofoner, havde vi tænkt at man kunne installere flere Pi's med én mikrofon. Disse Pi's skulle så kommunikere til en central Pi, eller anden server som skulle håndtere hver Pi og dets inputs.
+  - Som nævnt i overstående afsnit, er definitionen af støj hardcoded af brugeren. Det kunne være smart at få integreret machine-learning til dette i stedet. Så man kan træne en maskine til at tolke hvad støj er. På den måde kan man få et system, som er bedre til at vurdere støjniveauet. 
+  - Oprette et netværk af mikrofoner. Vi kunne godt tænke os at det var muligt at vi knyttede flere mikrofoner til en Raspberry Pi. Hvis det ikke er muligt med flere mikrofoner, havde vi tænkt at man kunne installere flere Pi's med én mikrofon hver. Disse Pi's skulle så kommunikere til en central Pi, eller anden server som skulle håndtere hver Pi og dets inputs og derefter stå for at styre Hue-lamperne. Hver lampe kunne så svare til en mikrofon. 
