@@ -18,7 +18,7 @@ Projektet kører i Node.js og derfor har vi anvendt nogle forskellige NPM pakker
 - **request**
   - _request_ bruges til at sende HTTP requests til Hue Bridgen
 
-Derudover er vi afhængige af et program/utility, der hedder **SoX**. SoX er det, som muliggør at vores program kan kommunikere med mikrofonen. SoX er ikke en NPM pakke, men derimod et program, som skal installeres på Pi'en, i stil med Node. Mere om det kan findes under afsnittet om _Setup og NPM install_ [Setup og NPM install med](#setup-inklusive-npm-install "link til afsnit"). SoX, kalder sig selv for _"the swiss army knife of sound"_ og denne bruges af pakken mic til at optage lyd. 
+Derudover er vi afhængige af et program/utility, der hedder **SoX**. SoX er det, som muliggør at vores program kan kommunikere med mikrofonen. SoX er ikke en NPM pakke, men derimod et program, som skal installeres på Pi'en, i stil med Node. Mere om det kan findes under afsnittet om [Setup og NPM install](#setup-inklusive-npm-install "link til afsnit"). SoX, kalder sig selv for _"the swiss army knife of sound"_ og denne bruges af pakken mic til at optage lyd. 
 
 ## Hvad kan det, hvad kan det ikke?
 Denne installation, opfanger mikrofonlyd og noterer det højeste lydniveau, inden for _x1_ antal sekunder. Dette lydniveau gemmes sammen med de lydniveauer den har observeret indenfor de sidste _x2_ minutter. Hvis støjniveauet er for højt, bliver Philips Hue lampen dæmpet, og hvis støjniveauet er alt for højt slukkes den helt. Når støjniveauet er lavt nok, bliver lampen tændt med den højeste lysstyrke.
@@ -152,7 +152,7 @@ Vi tackler punkterne hver for sig og argumenterer for hvorfor vores projekt leve
   - Oprette et netværk af mikrofoner. Vi kunne godt tænke os at det var muligt at vi knyttede flere mikrofoner til en Raspberry Pi. Hvis det ikke er muligt med flere mikrofoner, havde vi tænkt at man kunne installere flere Pi's med én mikrofon hver. Disse Pi's skulle så kommunikere til en central Pi, eller anden server som skulle håndtere hver Pi og dets inputs og derefter stå for at styre Hue-lamperne. Hver lampe kunne så svare til en mikrofon. 
 
 
-  ## Thanks for holding out and reading it all :squirrel:
+  ## Thanks for holding out and reading it all #:shipit:
   #### *Simon gav os lov til at skrive mere end 2 sider* :stuck_out_tongue_winking_eye:
   Han vidste nok ikke helt hvad han sagde ja til.
 
