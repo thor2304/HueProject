@@ -8,7 +8,7 @@ The final project runs on a Raspberry Pi in Node.js. The microphone is connected
 Projektet kører i Node.js og derfor har vi anvendt nogle forskellige NPM pakker for at få projektet til at virke. Her følger en liste over disse og en kort beskrivelse af hvad de bruges til:
 
 - mic
-  - _mic_ bruges til at optage lyden fra mikrofonen. Denne pakker laver en midlertidig fil på Pi'en. Filen har formatet raw og er derfor de rå input værdier fra mikrofonen uden noget formatering. 
+  - _mic_ bruges til at optage lyden fra mikrofonen. Denne pakke laver en midlertidig fil på Pi'en. Filen har formatet _raw_ og er derfor de rå input værdier fra mikrofonen uden noget formatering. 
 - wav-decoder
   - _wav-decoder_ kan aflæse .wav filer og lave dem om til javascript arrays. Kan ikke aflæse raw filer
 - waveheader
@@ -21,11 +21,14 @@ Projektet kører i Node.js og derfor har vi anvendt nogle forskellige NPM pakker
 
 Derudover er vi afhængige af et program/utility, der hedder SoX. SoX er det, som muliggør at vores program kan kommunikere med mikrofonen. SoX er ikke en NPM pakke, men derimod et program, som skal installeres på Pi'en, i stil med Node. Mere om det kan findes under afsnittet om _Setup og NPM install_. 
 
-## Hvad kan det?
+## Hvad kan det, hvad kan det ikke?
+Denne installation, kan opfange mikrofon lyd og afgøre, hvornår gennemsnittet af de højeste lyde, inden for _x_ antal sekunder, i lokalet er for høje. Udfra støj niveauet, dæmper Phillips Hue lampen sig, og ved alt for meget støj slukkes den. Når der ikke er noget støj, er lampen tændt med den højeste lys styrke.
 
+Pointen med installationen er at man skal kunne gå ind i et lokale, og få sig et hurtigt overblik over hvor der ikke er larm, så man kan sætte sig et sted hvor der er ro. Dette kræver dog et netværk af Raspberry Pi's der kommunikere sammen. Det har vi ikke haft adgang til i det forløbet, projektet blev lavet i. **Så PT kan en Pi kun lytte til mikrofonen tilknyttet sig selv.**
 
-## Hvad kan det ikke?
+Systemet kan ikke afgøre hvad der klassificeres som støj. **Systemet er ikke selv-tænkende**. Det er bruger afgjort hvad der er støj. I denne opgave har vi tolket støj som at det er mange høje lyde, over en længere periode, og generelt bare et højt lyd niveau. Systemet beregner gennemsnittet af de højeste lyde inden for et interval af 10 sekunder. Hvis gennemsnittet af de højeste lyde overskrider støjgrænsen, sat af brugeren, tolkes det som støj og systemet reagere tilsvarende.
 
+Man kan ikke ændre hvilken lampe der skal snakkes med gennem API'en, ligesom man kan ikke ændre hvilken Bridge man forbinder til, **hvis man ikke har adgang til kildekoden**. Der er ikke en interface, der kan bruges til ændring af oplysninger nødvendige for et lettere overblik fra brugerens synspunkt. *Dette kunne være en ting, man kunne videre udvikle.*
 
 
 ## API'er i projektet
