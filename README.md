@@ -18,7 +18,7 @@ Projektet kører i Node.js og derfor har vi anvendt nogle forskellige NPM pakker
 - **request**
   - _request_ bruges til at sende HTTP requests til Hue Bridgen
 
-Derudover er vi afhængige af et program/utility, der hedder **SoX**. SoX er det, som muliggør at vores program kan kommunikere med mikrofonen. SoX er ikke en NPM pakke, men derimod et program, som skal installeres på Pi'en, i stil med Node. Mere om det kan findes under afsnittet om _Setup og NPM install_ [Setup og NPM install med #](#setup-inklusive-npm-install "link til afsnit") [Setup og NPM install med /HueProject#](/HueProject#setup-inklusive-npm-install "link til afsnit"). SoX, kalder sig selv for _"the swiss army knife of sound"_ og denne bruges af pakken mic til at optage lyd. 
+Derudover er vi afhængige af et program/utility, der hedder **SoX**. SoX er det, som muliggør at vores program kan kommunikere med mikrofonen. SoX er ikke en NPM pakke, men derimod et program, som skal installeres på Pi'en, i stil med Node. Mere om det kan findes under afsnittet om _Setup og NPM install_ [Setup og NPM install med](#setup-inklusive-npm-install "link til afsnit"). SoX, kalder sig selv for _"the swiss army knife of sound"_ og denne bruges af pakken mic til at optage lyd. 
 
 ## Hvad kan det, hvad kan det ikke?
 Denne installation, opfanger mikrofonlyd og noterer det højeste lydniveau, inden for _x1_ antal sekunder. Dette lydniveau gemmes sammen med de lydniveauer den har observeret indenfor de sidste _x2_ minutter. Hvis støjniveauet er for højt, bliver Philips Hue lampen dæmpet, og hvis støjniveauet er alt for højt slukkes den helt. Når støjniveauet er lavt nok, bliver lampen tændt med den højeste lysstyrke.
@@ -102,17 +102,28 @@ __*Følgende foregår på Raspberry Pi'en.*__ Intet foregår på en computer.
    ```s
     node ras.js
     ```
-    For at afslutte node skal man trykke ctrl+c, det er meget vigtigt at man ikke trykker på andre taster mens `ras.js` kører da det får mikrofonen til at gå i kage. Hvis man gør dette har vi haft størst succes ved at genstarte vores Raspberry Pi med det samme. 
+    For at afslutte node skal man trykke __*ctrl+c*__, _det er **meget vigtigt** at man **ikke** trykker på andre taster mens `ras.js` kører_, da det får mikrofonen til at gå i kage. Hvis man gør dette, har vi haft størst succes ved at genstarte vores Raspberry Pi med det samme. 
 
 ## Brugen af produktet / anvendelsen
-Når du endelig har fået systmet oppe at køre, kan du se forskellige console logs:
+Når systemet er oppe at køre er der 3 stadier programmet kan være i. Disse er afgjort af de tresholds som er sat i kildekoden. 
+
+1. Der er ikke larm. Der er ikke meget støj i lokalet. :arrow_right: Lampen har den højeste mulige lysstyrke. 
+
+2. Det er støj i lokalet. Det burde være i et interval, hvor der er lidt støj, til meget støj. :arrow_right: Lampen dæmper sig mere, jo mere larm der er.
+
+3. Der er uudholdeligt meget støj i lokalet. :arrow_right: Lampen slukker.
+
+
+### Til fejlfinding eller mere dybdegående forståelse
+I kommandoprompten på Pi'en, der køre programmet, kan man se forskellige console logs. Man kan se:
 - Længden af arrayet for det højeste lydniveauer.
 - Det højeste lydniveau inden for tidsintervallet.
 - Gennemsnittet af de højeste lydniveauer.
-- Om gennemsnittet er under, mellem eller over tresholds'ne.
+- Om gennemsnittet er under, mellem eller over de tresholds.
 - `calculatedBrightness` som er en værdi, der beregnes til at styre hvor meget lyset skal dæmpes ved støj.
 
-*Ved små ændringer i kildekoden, kan flere console logs blive givet. Udkommentationerne (`//`) skal bare fjernes ved `// console.log(...)`*.
+ _Ved små ændringer i kildekoden, kan flere console logs blive vist. Udkommentationerne (`//`) skal bare fjernes ved_
+`// console.log(...)`.
 
 
 ## Derfor har dette projekt opfyldt kravene
@@ -139,3 +150,10 @@ Vi tackler punkterne hver for sig og argumenterer for hvorfor vores projekt leve
 - Hvordan kan man tage projektet til en ny højde?
   - Som nævnt i overstående afsnit, er definitionen af støj hardcoded af brugeren. Det kunne være smart at få integreret machine-learning til dette i stedet. Så man kan træne en maskine til at tolke hvad støj er. På den måde kan man få et system, som er bedre til at vurdere støjniveauet. 
   - Oprette et netværk af mikrofoner. Vi kunne godt tænke os at det var muligt at vi knyttede flere mikrofoner til en Raspberry Pi. Hvis det ikke er muligt med flere mikrofoner, havde vi tænkt at man kunne installere flere Pi's med én mikrofon hver. Disse Pi's skulle så kommunikere til en central Pi, eller anden server som skulle håndtere hver Pi og dets inputs og derefter stå for at styre Hue-lamperne. Hver lampe kunne så svare til en mikrofon. 
+
+
+  ## :eyes: Thanks for holding out and reading it all :squirrel:
+  #### *Simon gav os lov til at skrive mere end 2 sider* :stuck_out_tongue_winking_eye:
+  Han vidste nok ikke helt hvad han sagde ja til.
+
+  ### Project created by Frederik Greve Petersen and Thor Malmby Jørgin

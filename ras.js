@@ -132,7 +132,7 @@ stream.on('data', buffer => {
           */
 
           // Console logs, så man kan se de forskellige værdieri kommandopromten
-          console.log(average);
+          console.log("average: " + average);
           console.log("micArray length: " + micArray.length);
           console.log("maxAmplitude: " + maxAmplitude);
           //console.log(" median: " + Median);
