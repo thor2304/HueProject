@@ -21,7 +21,7 @@ Projektet kører i Node.js og derfor har vi anvendt nogle forskellige NPM pakker
 
 Derudover er vi afhængige af et program/utility, der hedder SoX. SoX er det, som muliggør at vores program kan kommunikere med mikrofonen. SoX er ikke en NPM pakke, men derimod et program, som skal installeres på Pi'en, i stil med Node. Mere om det kan findes under afsnittet om _Setup og NPM install_. 
 
-## Hvad kan det, hvad kan det ikke?
+## Hvad kan det, hvad kan det ikke? 
 Denne installation, kan opfange mikrofon lyd og afgøre, hvornår gennemsnittet af de højeste lyde, inden for _x_ antal sekunder, i lokalet er for høje. Udfra støj niveauet, dæmper Phillips Hue lampen sig, og ved alt for meget støj slukkes den. Når der ikke er noget støj, er lampen tændt med den højeste lys styrke.
 
 Pointen med installationen er at man skal kunne gå ind i et lokale, og få sig et hurtigt overblik over hvor der ikke er larm, så man kan sætte sig et sted hvor der er ro. Dette kræver dog et netværk af Raspberry Pi's der kommunikere sammen. Det har vi ikke haft adgang til i det forløbet, projektet blev lavet i. **Så PT kan en Pi kun lytte til mikrofonen tilknyttet sig selv.**
